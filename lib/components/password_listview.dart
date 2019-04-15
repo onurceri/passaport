@@ -1,29 +1,19 @@
 import 'package:flutter/material.dart';
-
-class CustomListItem {
-  final int id;
-  final String nickname;
-  final String accUsername;
-  final String accDisplayImage;
-
-  CustomListItem(
-      {this.id, this.nickname, this.accUsername, this.accDisplayImage});
-}
+import 'package:passaport/models/application_identity.dart';
 
 typedef void OnTapCallback(int index);
 
-class CustomListView {
-  CustomListView({this.listItems, this.callback});
-
-  final List<CustomListItem> listItems;
+class PasswordListView 
+{
+  final List<ApplicationIdentity> listItems;
   final OnTapCallback callback;
+  
+  PasswordListView({this.listItems, this.callback});
 
-  final TextStyle _nicknameFont = new TextStyle(
-      fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white);
-  final TextStyle _accountUsernameFont =
-      new TextStyle(fontSize: 16.0, color: Colors.white);
+  final TextStyle _nicknameFont = new TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white);
+  final TextStyle _accountUsernameFont = new TextStyle(fontSize: 16.0, color: Colors.white);
 
-  Widget _createRow(CustomListItem listItem) {
+  Widget _createRow(ApplicationIdentity listItem) {
     return new Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -35,7 +25,6 @@ class CustomListView {
             shape: BoxShape.circle,
             image: DecorationImage(
               fit: BoxFit.fill,
-              //image: new NetworkImage(listItem.accDisplayImage)
               image: new AssetImage(listItem.accDisplayImage)
             )
           ),
@@ -60,7 +49,7 @@ class CustomListView {
     );
   }
 
-  Widget _createListTile(CustomListItem listItem, OnTapCallback onTapCallback, int index) {
+  Widget _createListTile(ApplicationIdentity listItem, OnTapCallback onTapCallback, int index) {
     return new ListTile(
       title: _createRow(listItem),
       trailing: new Icon(Icons.keyboard_arrow_right, color: Colors.white),
@@ -70,12 +59,12 @@ class CustomListView {
     );
   }
 
-  Widget _createList(List<CustomListItem> listItems, OnTapCallback callback) {
+  Widget _createList(List<ApplicationIdentity> listItems, OnTapCallback callback) {
     return new ListView.builder(
       padding: const EdgeInsets.all(16.0),
       itemBuilder: (BuildContext _context, int i) {
         if (i.isOdd) {
-          return new Divider(color: Colors.white,);
+          return new Divider(color: Colors.white);
         }
 
         final int index = i ~/ 2;
