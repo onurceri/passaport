@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:passaport/models/application_identity.dart';
+import 'package:passaport/screens/home_page.dart';
 import 'package:passaport/src/passaport_database.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -46,11 +47,22 @@ class DetailPageState extends State<DetailPage> {
                     _updatePasswordItem(listItem.id, _usernameController.text,
                         _passwordController.text, context);
                   },
-                  child: const Text("Save"),
-                  color: Colors.blueGrey,
+                  child: const Text("Update"),
+                  color: Colors.green,
                   textColor: Colors.white,
                   padding: const EdgeInsets.all(10)),
               margin: const EdgeInsets.only(top: 10),
+            ),
+            Container(
+              child: new RaisedButton(
+                  onPressed: () {
+                    _deletePasswordItem(listItem.id, context);
+                  },
+                  child: const Text("Delete"),
+                  color: Colors.red,
+                  textColor: Colors.white,
+                  padding: const EdgeInsets.all(10)),
+              margin: const EdgeInsets.only(left: 10, top: 10),
             )
           ],
         )
@@ -59,6 +71,12 @@ class DetailPageState extends State<DetailPage> {
   }
 
   Widget _createEditRow(TextEditingController controller) {
+    var cursorPos = controller.selection;
+    controller.text = controller.text ?? '';
+    cursorPos = new TextSelection.fromPosition(
+        new TextPosition(offset: controller.text.length));
+    controller.selection = cursorPos;
+
     return Row(
       children: <Widget>[
         new Expanded(
@@ -71,14 +89,7 @@ class DetailPageState extends State<DetailPage> {
             child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  new TextFormField(
-                      controller: controller,
-                      autofocus: true,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                      }),
+                  new TextField(controller: controller),
                 ]),
           ),
         )
@@ -138,6 +149,8 @@ VoidCallback _updatePasswordItem(
       DBProvider.db.updateApplicationIdentity(response).then((result) {
         if (result > 0) {
           Fluttertoast.showToast(msg: "Identity was updated successfully.");
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomePage()));
         } else {
           Fluttertoast.showToast(msg: "Error occured!");
         }
@@ -145,4 +158,17 @@ VoidCallback _updatePasswordItem(
     }
   });
   return null;
-} 
+}
+
+VoidCallback _deletePasswordItem(int itemId, BuildContext context) {
+  DBProvider.db.deleteApplicationIdentity(itemId).then((result) {
+    if (result > 0) {
+      Fluttertoast.showToast(msg: "Identity was deleted successfully.");
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
+    } else {
+      Fluttertoast.showToast(msg: "Error occured!");
+    }
+  });
+  return null;
+}

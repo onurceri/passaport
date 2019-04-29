@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:passaport/models/application_identity.dart';
+import 'package:passaport/screens/home_page.dart';
 import 'package:passaport/src/passaport_database.dart';
 
 class NewPasswordScreen extends StatefulWidget {
@@ -48,8 +49,13 @@ class NewPasswordScreenState extends State<NewPasswordScreen> {
             Container(
               child: new RaisedButton(
                   onPressed: () {
-                    var app = new ApplicationIdentity(id:1, nickname :"nickname", accUsername: usernameController.text, accDisplayImage:"assets/images/microsoft-logo.jpg", password:passwordController.text);
-                    DBProvider.db.newApplicationIdentity(app);
+                    var app = new ApplicationIdentity(id:1, nickname :"nickname", accUsername: usernameController.text, 
+                    accDisplayImage:"assets/images/microsoft-logo.jpg", password:passwordController.text);
+                    DBProvider.db.newApplicationIdentity(app).then((response){
+                       if(response != null && response > 0){
+                         Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                       }
+                    });
                   },
                   child: const Text("Save"),
                   color: Colors.blueGrey,
