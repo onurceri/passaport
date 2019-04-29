@@ -135,14 +135,14 @@ VoidCallback _updatePasswordItem(
     if (response != null) {
       response.accUsername = username;
       response.password = password;
-      DBProvider.db.updateApplicationIdentity(response).then((result){
-        if(result > 0){
+      DBProvider.db.updateApplicationIdentity(response).then((result) {
+        if (result > 0) {
           Fluttertoast.showToast(msg: "Identity was updated successfully.");
-        }
-        else{
+        } else {
           Fluttertoast.showToast(msg: "Error occured!");
         }
       });
     }
   });
-}
+  return null;
+} 

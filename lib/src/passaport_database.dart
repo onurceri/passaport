@@ -71,12 +71,12 @@ class DBProvider {
 
   Future<int> deleteApplicationIdentity(int id) async {
     final db = await database;
-    db.delete("ApplicationIdentity", where: "id = ?", whereArgs: [id]);
+    return db.delete("ApplicationIdentity", where: "id = ?", whereArgs: [id]);
   }
 
   Future<int> deleteAll() async {
     final db = await database;
-    db.rawDelete("Delete * from ApplicationIdentity");
+    return db.rawDelete("Delete * from ApplicationIdentity");
   }
 }
 
