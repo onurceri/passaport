@@ -16,10 +16,12 @@ class DetailPage extends StatefulWidget {
 class DetailPageState extends State<DetailPage> {
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _nickNameController = TextEditingController();
 
   Widget _showDetail(ApplicationIdentity listItem) {
     _usernameController.text = listItem.accUsername;
     _passwordController.text = listItem.password;
+    _nickNameController.text = listItem.nickname;
 
     return new SingleChildScrollView(
         child: new Column(
@@ -29,11 +31,13 @@ class DetailPageState extends State<DetailPage> {
             new Expanded(
               child: new Container(
                   color: Colors.white,
-                  child: Image.asset("assets/images/microsoft-logo.jpg",
+                  child: Image.asset(listItem.accDisplayImage,
                       height: 200)),
             )
           ],
         ),
+        LabelRow("Nickname"),
+        _createEditRow(_nickNameController),
         LabelRow("Username"),
         _createEditRow(_usernameController),
         LabelRow("Password"),
@@ -44,8 +48,12 @@ class DetailPageState extends State<DetailPage> {
             Container(
               child: new RaisedButton(
                   onPressed: () {
-                    _updatePasswordItem(listItem.id, _usernameController.text,
-                        _passwordController.text, context);
+                    _updatePasswordItem(
+                        listItem.id,
+                        _nickNameController.text.trim(),
+                        _usernameController.text.trim(),
+                        _passwordController.text.trim(),
+                        context);
                   },
                   child: const Text("Update"),
                   color: Colors.green,
@@ -140,12 +148,13 @@ class LabelRow extends StatelessWidget {
   }
 }
 
-VoidCallback _updatePasswordItem(
-    int itemId, String username, String password, BuildContext context) {
+VoidCallback _updatePasswordItem(int itemId, String nickname, String username,
+    String password, BuildContext context) {
   DBProvider.db.getApplicationIdentity(itemId).then((response) {
     if (response != null) {
       response.accUsername = username;
       response.password = password;
+      response.nickname = nickname;
       DBProvider.db.updateApplicationIdentity(response).then((result) {
         if (result > 0) {
           Fluttertoast.showToast(msg: "Identity was updated successfully.");
