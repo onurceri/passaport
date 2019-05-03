@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:passaport/models/application_identity.dart';
+import 'package:passaport/screens/home_page.dart';
 import 'package:passaport/src/passaport_database.dart';
+import 'package:passaport/components/display_image.dart';
 
 class NewPasswordScreen extends StatefulWidget {
   NewPasswordScreen({Key key}) : super(key: key);
@@ -26,6 +28,7 @@ class NewPasswordScreenState extends State<NewPasswordScreen> {
   Widget _addNewIdentityWidget() {
     final TextEditingController usernameController = new TextEditingController();
     final TextEditingController passwordController = new TextEditingController();
+    final TextEditingController nickNameController = new TextEditingController();
 
     return new SingleChildScrollView(
       child: new Column(
@@ -38,6 +41,8 @@ class NewPasswordScreenState extends State<NewPasswordScreen> {
               )
             ],
           ),
+          LabelRow("Nickname"),
+          _createEditRow(nickNameController),
           LabelRow("Username"),
           _createEditRow(usernameController),
           LabelRow("Password"),
@@ -48,8 +53,13 @@ class NewPasswordScreenState extends State<NewPasswordScreen> {
             Container(
               child: new RaisedButton(
                   onPressed: () {
-                    var app = new ApplicationIdentity(id:1, nickname :"nickname", accUsername: usernameController.text, accDisplayImage:"assets/images/microsoft-logo.jpg", password:passwordController.text);
-                    DBProvider.db.newApplicationIdentity(app);
+                    var app = new ApplicationIdentity(nickname :nickNameController.text.trim(), accUsername: usernameController.text.trim(), 
+                    accDisplayImage: new DisplayImage().getDisplayImageOfAccount(usernameController.text, nickNameController.text), password:passwordController.text.trim());
+                    DBProvider.db.newApplicationIdentity(app).then((response){
+                       if(response != null && response > 0){
+                         Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                       }
+                    });
                   },
                   child: const Text("Save"),
                   color: Colors.blueGrey,

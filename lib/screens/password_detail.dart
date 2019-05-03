@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:passaport/models/application_identity.dart';
+import 'package:passaport/screens/home_page.dart';
 import 'package:passaport/src/passaport_database.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -15,10 +16,12 @@ class DetailPage extends StatefulWidget {
 class DetailPageState extends State<DetailPage> {
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _nickNameController = TextEditingController();
 
   Widget _showDetail(ApplicationIdentity listItem) {
     _usernameController.text = listItem.accUsername;
     _passwordController.text = listItem.password;
+    _nickNameController.text = listItem.nickname;
 
     return new SingleChildScrollView(
         child: new Column(
@@ -28,11 +31,13 @@ class DetailPageState extends State<DetailPage> {
             new Expanded(
               child: new Container(
                   color: Colors.white,
-                  child: Image.asset("assets/images/microsoft-logo.jpg",
+                  child: Image.asset(listItem.accDisplayImage,
                       height: 200)),
             )
           ],
         ),
+        LabelRow("Nickname"),
+        _createEditRow(_nickNameController),
         LabelRow("Username"),
         _createEditRow(_usernameController),
         LabelRow("Password"),
@@ -43,14 +48,29 @@ class DetailPageState extends State<DetailPage> {
             Container(
               child: new RaisedButton(
                   onPressed: () {
-                    _updatePasswordItem(listItem.id, _usernameController.text,
-                        _passwordController.text, context);
+                    _updatePasswordItem(
+                        listItem.id,
+                        _nickNameController.text.trim(),
+                        _usernameController.text.trim(),
+                        _passwordController.text.trim(),
+                        context);
                   },
-                  child: const Text("Save"),
-                  color: Colors.blueGrey,
+                  child: const Text("Update"),
+                  color: Colors.green,
                   textColor: Colors.white,
                   padding: const EdgeInsets.all(10)),
               margin: const EdgeInsets.only(top: 10),
+            ),
+            Container(
+              child: new RaisedButton(
+                  onPressed: () {
+                    _deletePasswordItem(listItem.id, context);
+                  },
+                  child: const Text("Delete"),
+                  color: Colors.red,
+                  textColor: Colors.white,
+                  padding: const EdgeInsets.all(10)),
+              margin: const EdgeInsets.only(left: 10, top: 10),
             )
           ],
         )
@@ -59,6 +79,12 @@ class DetailPageState extends State<DetailPage> {
   }
 
   Widget _createEditRow(TextEditingController controller) {
+    var cursorPos = controller.selection;
+    controller.text = controller.text ?? '';
+    cursorPos = new TextSelection.fromPosition(
+        new TextPosition(offset: controller.text.length));
+    controller.selection = cursorPos;
+
     return Row(
       children: <Widget>[
         new Expanded(
@@ -71,14 +97,7 @@ class DetailPageState extends State<DetailPage> {
             child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  new TextFormField(
-                      controller: controller,
-                      autofocus: true,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                      }),
+                  new TextField(controller: controller),
                 ]),
           ),
         )
@@ -129,15 +148,18 @@ class LabelRow extends StatelessWidget {
   }
 }
 
-VoidCallback _updatePasswordItem(
-    int itemId, String username, String password, BuildContext context) {
+VoidCallback _updatePasswordItem(int itemId, String nickname, String username,
+    String password, BuildContext context) {
   DBProvider.db.getApplicationIdentity(itemId).then((response) {
     if (response != null) {
       response.accUsername = username;
       response.password = password;
+      response.nickname = nickname;
       DBProvider.db.updateApplicationIdentity(response).then((result) {
         if (result > 0) {
           Fluttertoast.showToast(msg: "Identity was updated successfully.");
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomePage()));
         } else {
           Fluttertoast.showToast(msg: "Error occured!");
         }
@@ -145,4 +167,17 @@ VoidCallback _updatePasswordItem(
     }
   });
   return null;
-} 
+}
+
+VoidCallback _deletePasswordItem(int itemId, BuildContext context) {
+  DBProvider.db.deleteApplicationIdentity(itemId).then((result) {
+    if (result > 0) {
+      Fluttertoast.showToast(msg: "Identity was deleted successfully.");
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
+    } else {
+      Fluttertoast.showToast(msg: "Error occured!");
+    }
+  });
+  return null;
+}

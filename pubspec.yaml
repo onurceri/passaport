@@ -1,5 +1,5 @@
 name: passaport
-description: A new Flutter project.
+description: A organizer for your passwords.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -22,11 +22,17 @@ dependencies:
   sqflite: any
   cupertino_icons: ^0.1.2
   path_provider: any
-  fluttertoast: ^3.0.3 
+  fluttertoast: ^3.0.3
+  flutter_launcher_icons: "^0.6.1"
 
 dev_dependencies:
   flutter_test:
-    sdk: flutter
+    sdk: flutter    
+
+flutter_icons:
+  image_path: "assets/images/icon.png" 
+  android: true
+  ios: true    
 
 
 # For information on the generic Dart part of this file, see the
@@ -41,6 +47,14 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/microsoft-logo.jpg
+    - assets/images/noimage-logo.jpg
+    - assets/images/gmail-logo.jpg
+    - assets/images/outlook-logo.jpg
+    - assets/images/steam-logo.jpg
+    - assets/images/facebook-logo.jpg
+    - assets/images/instagram-logo.png
+    - assets/images/snapchat-logo.png
+    - assets/images/twitter-logo.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
