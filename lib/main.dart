@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:passaport/screens/home_page.dart';
+import 'package:passaport/screens/authentication.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: AuthenticationPage(),
     );
   }
 }
